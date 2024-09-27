@@ -83,10 +83,10 @@ async function getDigitlessUsers() {
 }
 
 // Call functions based on your needs
-getProductsOver100();
-getWinterProducts();
-getJewelryByRating();
-getTotalReviews();
-getAverageScoreByCategory();
-getDigitlessUsers()
+await getProductsOver100();
+await getWinterProducts();
+await getJewelryByRating();
+await getTotalReviews();
+await getAverageScoreByCategory();
+await getDigitlessUsers()
   .finally(() => client.close());
