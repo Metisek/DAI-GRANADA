@@ -7,10 +7,14 @@
   "type": "module",
   "scripts": {
     "seed": "node --env-file=.env seed.js",
-    "queries": "node --env-file=.env queries.js"
+    "queries": "node --env-file=.env queries.js",
+    "tienda": "node --watch --env-file=.env tienda.js"
   },
   "dependencies": {
-    "mongodb": "^6.9.0"
+    "bootstrap": "^5.3.3",
+    "chokidar": "^3.6.0",
+    "mongodb": "^6.9.0",
+    "nunjucks": "^3.2.4"
   },
   "devDependencies": {
     "@types/node": "^22.7.3"
