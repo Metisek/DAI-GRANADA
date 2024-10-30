@@ -1,3 +1,4 @@
+// .seed.js
 import { MongoClient } from 'mongodb';
 // Use node-fetch for Node.js if needed (for older versions)
 // import fetch from 'node-fetch';
