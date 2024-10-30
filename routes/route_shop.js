@@ -71,5 +71,25 @@ ShopRouter.get('/frontpage', async (req, res) => {
     }
   });
 
+// Trasa do pobierania produktów według kategorii
+ShopRouter.get('/categories/:category', async (req, res) => {
+    try {
+        const category = req.params.category;
+        const products = await Products.find({ category });
+        res.render('categories.html', { products, category }); // Renderowanie widoku z produktami
+    } catch (err) {
+        res.status(500).send({ err });
+    }
+});
+
+ShopRouter.get('/categories', async (req, res) => {
+    try {
+        const categories = await Products.distinct("category"); // Pobiera unikalne kategorie
+        res.json(categories); // Zwraca kategorie w formacie JSON
+    } catch (err) {
+        res.status(500).send({ err });
+    }
+});
+
 
 export default ShopRouter

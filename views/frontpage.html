@@ -1,43 +1,13 @@
-<!-- views/frontpage.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Store</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Store</a>
-        <form class="form-inline my-2 my-lg-0 ml-auto">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
-        <ul class="navbar-nav ml-3">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="categoriesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Categories
-                </a>
-                <div class="dropdown-menu" aria-labelledby="categoriesDropdown">
-                    <a class="dropdown-item" href="#">Men's Fashion</a>
-                    <a class="dropdown-item" href="#">Women's Fashion</a>
-                    <a class="dropdown-item" href="#">Beauty Products</a>
-                    <a class="dropdown-item" href="#">Watches</a>
-                    <a class="dropdown-item" href="#">Electronics</a>
-                    <a class="dropdown-item" href="#">Grocery</a>
-                    <a class="dropdown-item" href="#">Kids Fashion</a>
-                    <a class="dropdown-item" href="#">Sports</a>
-                </div>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Orders</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Logout</a>
-            </li>
-        </ul>
-    </nav>
+    <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
 
     <div class="container mt-4">
         <div class="row">
@@ -57,8 +27,19 @@
     </div>
 
     <!-- Bootstrap and jQuery Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(function() {
+            $("#header").load("/resources/header.html", function(response, status, xhr) {
+                if (status == "error") {
+                    console.log("Error loading header: " + xhr.status + " " + xhr.statusText);
+                }
+            });
+        });
+    </script>
+
 </body>
 </html>
