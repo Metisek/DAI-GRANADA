@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+    <div id="header"></div> <!-- Placeholder for dynamically loaded header -->
+
+    <div class="container mt-4">
+        <h3>Search Results for "{{ query }}"</h3>
+
+        {% if products.length > 0 %}
+            <div class="row">
+                {% for product in products %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="{{ product.image }}" class="card-img-top" alt="{{ product.title }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.title }}</h5>
+                            <p class="card-text">{{ product.description }}</p>
+                            <p class="card-text"><strong>Price: </strong>${{ product.price }}</p>
+                            <p class="card-text"><strong>Category: </strong>{{ product.category }}</p>
+                            <p class="card-text">
+                                <strong>Rating: </strong>{{ product.rating.rate }} / 5 ({{ product.rating.count }} reviews)
+                            </p>
+                            <a href="/product/{{ product._id }}" class="btn btn-primary">View product</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No products found for "{{ query }}"</p>
+        {% endif %}
+    </div>
+
+    <!-- jQuery and Bootstrap Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Load the header from the external file
+        $(function() {
+            $("#header").load("/resources/header.html", function(response, status, xhr) {
+                if (status === "error") {
+                    console.log("Error loading header: " + xhr.status + " " + xhr.statusText);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

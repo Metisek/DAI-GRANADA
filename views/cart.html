@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Your Cart</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div id="header"></div> <!-- Placeholder for the header -->
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Your Cart</h1>
+        <div class="list-group">
+            {% if cart.length > 0 %}
+                {% for item in cart %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ item.image }}" alt="{{ item.title }}" class="img-fluid rounded mr-3" style="max-width: 100px; height: auto;">
+                        <div>
+                            <h5 class="mb-1">{{ item.title }}</h5>
+                            <p class="mb-1 text-success">${{ item.price }}</p>
+                        </div>
+                    </div>
+                    <form action="/cart/remove" method="POST" class="mb-0">
+                        <input type="hidden" name="productId" value="{{ item.productId }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>Your cart is empty</p>
+            {% endif %}
+        </div>
+
+        {% if cart.length > 0 %}
+            <h3 class="mt-4">Total: ${{ cart | sumPrices }}</h3>
+        {% endif %}
+        <a href="/" class="btn btn-primary mt-4">Return to Shop</a>
+    </div>
+
+    <!-- Bootstrap and jQuery Scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        $(function() {
+            $("#header").load("/resources/header.html", function(response, status, xhr) {
+                if (status == "error") {
+                    console.log("Error loading header: " + xhr.status + " " + xhr.statusText);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

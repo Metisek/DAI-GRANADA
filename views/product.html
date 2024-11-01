@@ -12,18 +12,22 @@
 
     <div class="container mt-4">
         <div class="row">
-            <div class="col-md-6">
-                <img src="{{ product.image }}" alt="Product Image" class="img-fluid rounded">
-            </div>
-            <div class="col-md-6 d-flex flex-column justify-content-center"> <!-- Dodano klasy do wyrównania -->
-                <h2>{{ product.title }}</h2>
-                <p class="text-muted">{{ product.description }}</p>
-                <h4 class="text-success">${{ product.price }}</h4>
-                <p>Rating: {{ product.rating.rate }} ({{ product.rating.count }} reviews)</p>
-                <button class="btn btn-primary custom-btn">Add to Cart</button> <!-- Zmniejszony przycisk -->
-            </div>
+          <div class="col-md-6">
+            <img src="{{ product.image }}" alt="Product Image" class="img-fluid rounded">
+          </div>
+          <div class="col-md-6 d-flex flex-column justify-content-center">
+            <h2>{{ product.title }}</h2>
+            <p class="text-muted">{{ product.description }}</p>
+            <h4 class="text-success">${{ product.price }}</h4>
+            <form action="/cart/add" method="POST">
+              <input type="hidden" name="productId" value="{{ product.id }}">
+              <input type="hidden" name="title" value="{{ product.title }}">
+              <input type="hidden" name="price" value="{{ product.price }}">
+              <button type="submit" class="btn btn-primary">Add to cart</button>
+            </form>
+          </div>
         </div>
-    </div>
+      </div>
 
     <!-- Bootstrap and jQuery Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
