@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden; /* Domyślnie wyłączamy przewijanie */
+        }
+
+        #header {
+            position: relative;
+            z-index: 10;
+        }
+
+        .form-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 25px 10px;
+        }
+
+        body.scrollable {
+            overflow-y: auto; /* Włącz przewijanie */
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div id="header"></div>
+
+    <!-- Login Form -->
+    <div class="container">
+        <div class="form-container">
+            <h2 class="text-center mb-4">Login</h2>
+            {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+            <form action="/login" method="post">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(function () {
+            // Wczytaj dynamicznie nagłówek
+            $.get("/header", function (data) {
+                $("#header").html(data);
+
+                // Dopasuj formularz po wczytaniu headera
+                adjustFormPosition();
+            }).fail(function (xhr) {
+                console.error("Error loading header: " + xhr.status + " " + xhr.statusText);
+            });
+
+            // Reaguj na zmianę rozmiaru okna
+            $(window).on("resize", adjustFormPosition);
+
+            // Funkcja dopasowująca formularz
+            function adjustFormPosition() {
+                const headerHeight = $("#header").outerHeight(); // Wysokość headera
+                const windowHeight = $(window).height();
+                const formHeight = $(".form-container").outerHeight();
+
+                const availableSpace = windowHeight - headerHeight - 50; // Przestrzeń dla formularza (50px marginesu)
+
+                if (formHeight > availableSpace) {
+                    // Jeśli formularz się nie mieści, włącz przewijanie
+                    $("body").addClass("scrollable");
+                    $(".container").css({
+                        "padding-top": `${headerHeight + 25}px`,
+                        "align-items": "flex-start", // Przesuń formularz niżej
+                    });
+                } else {
+                    // Formularz mieści się w oknie
+                    $("body").removeClass("scrollable");
+                    $(".container").css({
+                        "padding-top": `${headerHeight + 25}px`,
+                        "align-items": "center", // Wyśrodkuj formularz
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>

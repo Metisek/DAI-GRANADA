@@ -4,7 +4,13 @@ import mongoose from "mongoose";
 const ProductsSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
+        validate: {
+            validator: function(v) {
+                return /^[A-Z]/.test(v);
+            },
+           message: props => `${props.value} must start with an uppercase letter!`
+        }
     },
     price: {
         type: Number,
@@ -32,6 +38,7 @@ const ProductsSchema = new mongoose.Schema({
             required: true
         }
     }
-})
+});
+
 const Products = mongoose.model("products", ProductsSchema);
-export default Products
+export default Products;

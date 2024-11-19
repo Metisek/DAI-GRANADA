@@ -3,11 +3,32 @@ import nunjucks from "nunjucks";
 import session from "express-session"; // importujemy express-session
 import connectDB from "./model/db.js";
 import ShopRouter from "./routes/route_shop.js";
+import cookieParser from "cookie-parser"
+import jwt from "jsonwebtoken"
 
 connectDB();
 
 const app = express();
 const IN = process.env.IN || 'development';
+
+app.use(cookieParser())
+
+const autentificacion = (req, res, next) => {
+  const token = req.cookies.access_token;
+  if (token) {
+      try {
+          const data = jwt.verify(token, process.env.SECRET_KEY);
+          req.username = data.user; // Zalogowany użytkownik
+      } catch (err) {
+          req.username = null; // Niepoprawny token
+      }
+  } else {
+      req.username = null; // Brak tokena = niezalogowany użytkownik
+  }
+  next();
+};
+
+app.use(autentificacion)
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -51,3 +72,4 @@ const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+

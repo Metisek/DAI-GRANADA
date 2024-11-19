@@ -103,8 +103,26 @@ ShopRouter.get("/search", async (req, res) => {
 // Trasa wyświetlania koszyka
 ShopRouter.get('/cart', (req, res) => {
     const cart = req.session.cart || [];
-    res.render('cart.html', { cart });
+    const user = req.username || "Guest";
+    res.render('cart.html', { cart, user });
   });
+
+// Trasa do logowania
+ShopRouter.get('/login', (req, res) => {
+  res.render('login.html'); // Renderowanie szablonu login.html
+});
+
+// Trasa do rejestracji
+ShopRouter.get('/register', (req, res) => {
+  res.render('register.html'); // Renderowanie szablonu register.html
+});
+
+
+
+ShopRouter.get('/logout', (req, res) => {
+    const user = req.username
+    res.clearCookie('access_token').render("login.html", {user})
+  })
 
   // Trasa dodawania produktu do koszyka
 ShopRouter.post('/cart/add', async (req, res) => {
@@ -138,6 +156,49 @@ ShopRouter.post('/cart/remove', (req, res) => {
 
     res.redirect('/cart');
   });
+
+ShopRouter.use((req, res, next) => {
+    res.locals.isAuthenticated = !!req.username; // Sprawdzenie, czy użytkownik jest zalogowany
+    next();
+});
+
+ShopRouter.get('/header', (req, res) => {
+  res.render('resources/header.html'); // Renderowanie dynamicznego nagłówka
+});
+
+// Obsługa logowania
+ShopRouter.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  // Weryfikacja użytkownika (przykład - wymaga bazy danych)
+  if (username === 'admin' && password === 'password') {
+      const token = jwt.sign({ user: username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+      res.cookie('access_token', token, { httpOnly: true });
+      return res.redirect('/');
+  } else {
+      return res.status(401).render('login.html', { error: 'Invalid username or password.' });
+  }
+});
+
+// Obsługa rejestracji
+ShopRouter.post('/register', async (req, res) => {
+  const { username, password, email } = req.body;
+
+  // Przykład prostego zapisu do bazy (powinien być rozbudowany o hashowanie hasła)
+  try {
+      const existingUser = await Users.findOne({ username });
+      if (existingUser) {
+          return res.status(400).render('register.html', { error: 'Username already exists.' });
+      }
+
+      const newUser = new Users({ username, password, email });
+      await newUser.save();
+      return res.render('register.html', { success: 'Registration successful. You can now log in.' });
+  } catch (err) {
+      return res.status(500).render('register.html', { error: 'Error during registration. Please try again.' });
+  }
+});
+
 
 
 export default ShopRouter;
