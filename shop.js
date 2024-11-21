@@ -21,9 +21,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Konfiguracja nunjucks
-nunjucks.configure('views', {
+const env = nunjucks.configure('views', {
   autoescape: true,
   express: app
+});
+
+env.addFilter('capitalize', function(str) {
+  if (typeof str !== 'string') return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
 });
 
 // Obsługa plików statycznych

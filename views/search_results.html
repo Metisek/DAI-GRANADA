@@ -23,7 +23,7 @@
                             <h5 class="card-title">{{ product.title }}</h5>
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>Price: </strong>${{ product.price }}</p>
-                            <p class="card-text"><strong>Category: </strong>{{ product.category }}</p>
+                            <p class="card-text"><strong>Category: </strong>{{ product.category | capitalize }}</p>
                             <p class="card-text">
                                 <strong>Rating: </strong>{{ product.rating.rate }} / 5 ({{ product.rating.count }} reviews)
                             </p>

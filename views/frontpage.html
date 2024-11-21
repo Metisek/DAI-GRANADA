@@ -17,7 +17,7 @@
                     <img src="{{ product.image }}" class="card-img-top" alt="{{ product.title }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ product.title }}</h5>
-                        <p class="card-text">{{ product.category }}</p>
+                        <p class="card-text">{{ product.category | capitalize}}</p>
                         <a href="/product/{{ product._id }}" class="btn btn-primary">View product</a>
                     </div>
                 </div>
