@@ -12,7 +12,7 @@
     <div class="container mt-4">
         <h1 class="mb-4">Your Cart</h1>
         <div class="list-group">
-            {% if cart.length > 0 %}
+            {% if cart and cart.length > 0 %}
                 {% for item in cart %}
                 <div class="list-group-item d-flex justify-content-between align-items-center">
                     <div class="d-flex align-items-center">
@@ -33,7 +33,7 @@
             {% endif %}
         </div>
 
-        {% if cart.length > 0 %}
+        {% if cart and cart.length > 0 %}
             <h3 class="mt-4">Total: ${{ cart | sumPrices }}</h3>
         {% endif %}
         <a href="/" class="btn btn-primary mt-4">Return to Shop</a>

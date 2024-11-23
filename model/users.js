@@ -1,4 +1,3 @@
-// model/users.js
 import mongoose from 'mongoose';
 
 const UsersSchema = new mongoose.Schema({
@@ -22,6 +21,10 @@ const UsersSchema = new mongoose.Schema({
   admin: {
     type: Boolean,
     default: false
+  },
+  cart: {
+    type: Array,
+    default: []
   }
 });
 

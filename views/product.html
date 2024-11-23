@@ -6,51 +6,78 @@
   <title>{{ product.title }}</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css"> <!-- Ścieżka do pliku CSS -->
-  </head>
-  <body>
-      <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
+</head>
+<body>
+  <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
 
-      <div class="container mt-4">
-          <div class="row">
-            <div class="col-md-6">
-              <img src="{{ product.image }}" alt="Product Image" class="img-fluid rounded">
-            </div>
-            <div class="col-md-6 d-flex flex-column justify-content-center">
-              <h2>{{ product.title }}</h2>
-              <p>{{ product.category | capitalize }}</p>
-              <p class="text-muted">{{ product.description | capitalize }}</p>
+  <div class="container mt-4">
+    <div class="row">
+      <div class="col-md-6">
+        <img src="{{ product.image }}" alt="Product Image" class="img-fluid rounded">
+      </div>
+      <div class="col-md-6 d-flex flex-column justify-content-center">
+        <h2>{{ product.title }}</h2>
+        <p>{{ product.category | capitalize }}</p>
+        <p class="text-muted">{{ product.description | capitalize }}</p>
+        <h4 class="text-success">${{ product.price }}</h4>
+        {% if user.admin %}
+        <button type="button" class="btn btn-warning mb-2" data-toggle="modal" data-target="#editProductModal">Quick Edit</button>
+        {% endif %}
+        <form action="/cart/add" method="POST">
+          <input type="hidden" name="productId" value="{{ product.id }}">
+          <input type="hidden" name="title" value="{{ product.title }}">
+          <input type="hidden" name="price" value="{{ product.price }}">
+          <button type="submit" class="btn btn-primary">Add to cart</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
-              <h4 class="text-success">${{ product.price }}</h4>
-              {% if admin %}
-              <form action="/update-product" method="POST">
-                <input type="hidden" name="_csrf" value="{{ csrf_token }}">
-                <input type="hidden" name="product_id" value="{{ product.id }}">
-                <div class="form-group">
-                  <label for="title">Title:</label>
-                  <input type="text" id="title" name="title" class="form-control" value="{{ product.title }}">
-                </div>
-                <div class="form-group">
-                  <label for="price">Price:</label>
-                  <input type="number" id="price" name="price" class="form-control" value="{{ product.price }}">
-                </div>
-                <button type="submit" class="btn btn-primary">Update</button>
-              </form>
-              {% else %}
-              <form action="/cart/add" method="POST">
-                <input type="hidden" name="productId" value="{{ product.id }}">
-                <input type="hidden" name="title" value="{{ product.title }}">
-                <input type="hidden" name="price" value="{{ product.price }}">
-                <button type="submit" class="btn btn-primary">Add to cart</button>
-              </form>
-              {% endif %}
-            </div>
-          </div>
+  <!-- Edit Product Modal -->
+  <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg"> <!-- Added modal-lg class for larger modal -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
         </div>
+        <div class="modal-body">
+          <form id="editProductForm">
+            <input type="hidden" name="product_id" value="{{ product.id }}">
+            <div class="form-group">
+              <label for="title">Title:</label>
+              <input type="text" id="title" name="title" class="form-control" value="{{ product.title }}">
+            </div>
+            <div class="form-group">
+              <label for="price">Price:</label>
+              <input type="number" id="price" name="price" class="form-control" value="{{ product.price }}" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="category">Category:</label>
+              <input type="text" id="category" name="category" class="form-control" value="{{ product.category }}">
+            </div>
+            <div class="form-group">
+              <label for="description">Description:</label>
+              <textarea id="description" name="description" class="form-control" rows="4">{{ product.description }}</textarea>
+            </div>
+            <div class="form-group">
+              <label for="image">Image URL:</label>
+              <input type="text" id="image" name="image" class="form-control" value="{{ product.image }}">
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- Bootstrap and jQuery Scripts -->
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="/js/header.js"></script>
+  <!-- Bootstrap and jQuery Scripts -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/private/js/editProduct.js"></script>
 </body>
 </html>
