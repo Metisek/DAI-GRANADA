@@ -1,17 +1,19 @@
 import express from "express";
 import nunjucks from "nunjucks";
-import session from "express-session"; // importujemy express-session
+import session from "express-session";
 import connectDB from "./model/db.js";
 import ShopRouter from "./routes/route_shop.js";
+import UserRouter from "./routes/route_users.js";
+import RatingsRouter from "./routes/route_ratings.js"; // Import the new router
 import cookieParser from "cookie-parser";
 import jwt from "jsonwebtoken";
-import UserRouter from "./routes/route_users.js";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from 'url';
-import Users from "./model/users.js"; // Import Users model
+import Users from "./model/users.js";
+import winston from "winston"; // Import winston for logging
 
-// Załaduj zmienne środowiskowe z pliku .env
+// Load environment variables from .env file
 dotenv.config();
 
 connectDB();
@@ -27,7 +29,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Konfiguracja nunjucks
+// Configure nunjucks
 const env = nunjucks.configure('views', {
   autoescape: true,
   express: app
@@ -42,7 +44,7 @@ env.addFilter('sumPrices', function(cart) {
   return cart.reduce((sum, item) => sum + item.price, 0);
 });
 
-// Obsługa plików statycznych
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/private', express.static(path.join(__dirname, 'private')));
 
@@ -84,13 +86,35 @@ const autentificacion = async (req, res, next) => {
 
 app.use(autentificacion);
 
-// Użycie UserRouter do obsługi tras użytkowników
+// Add winston logger
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'error.log', level: 'error' }),
+    new winston.transports.File({ filename: 'combined.log' })
+  ]
+});
+
+if (process.env.NODE_ENV !== 'production') {
+  logger.add(new winston.transports.Console({
+    format: winston.format.simple()
+  }));
+}
+
+app.use((req, res, next) => {
+  logger.info(`${req.method} ${req.url}`);
+  next();
+});
+
+// Use routers
 app.use("/", UserRouter);
 app.use("/", ShopRouter);
+app.use("/api/ratings", RatingsRouter); // Use the new router
 
-// Middleware do logowania błędów
+// Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  logger.error(err.stack);
   res.status(500).send('Something broke!');
 });
 

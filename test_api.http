@@ -1,0 +1,18 @@
+### List all ratings with pagination
+GET http://localhost:8000/api/ratings?desde=0&hasta=4
+
+###
+
+### Get rating of a specific product
+GET http://localhost:8000/api/ratings/6719f538fdfbd218f753f044
+
+###
+
+### Update rating of a specific product
+PUT http://localhost:8000/api/ratings/6719f538fdfbd218f753f044
+Content-Type: application/json
+
+{
+  "rate": 4.5,
+  "count": 150
+}
