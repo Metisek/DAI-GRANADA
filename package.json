@@ -20,7 +20,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.9.0",
     "mongoose": "^8.7.3",
-    "nunjucks": "^3.2.4"
+    "nunjucks": "^3.2.4",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/node": "^22.7.3"

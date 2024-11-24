@@ -6,6 +6,7 @@
   <title>{{ product.title }}</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/style.css"> <!-- Ścieżka do pliku CSS -->
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
@@ -20,6 +21,10 @@
         <p>{{ product.category | capitalize }}</p>
         <p class="text-muted">{{ product.description | capitalize }}</p>
         <h4 class="text-success">${{ product.price }}</h4>
+        <div class="rating">
+          <p>Rating: {{ product.rating.rate }} <span>({{ product.rating.count }})</span></p>
+          <div class="stars">{{ product.starRating | safe }}</div>
+        </div>
         {% if user.admin %}
         <button type="button" class="btn btn-warning mb-2" data-toggle="modal" data-target="#editProductModal">Quick Edit</button>
         {% endif %}

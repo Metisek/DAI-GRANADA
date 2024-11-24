@@ -5,6 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Results</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .card-body {
+            margin: 10px;
+        }
+        .card-img-top {
+            height: 250px;
+            object-fit: contain;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
 
@@ -24,9 +35,10 @@
                             <p class="card-text">{{ product.description }}</p>
                             <p class="card-text"><strong>Price: </strong>${{ product.price }}</p>
                             <p class="card-text"><strong>Category: </strong>{{ product.category | capitalize }}</p>
-                            <p class="card-text">
-                                <strong>Rating: </strong>{{ product.rating.rate }} / 5 ({{ product.rating.count }} reviews)
-                            </p>
+                            <div class="rating">
+                                <p>Rating: {{ product.rating.rate }} <span>({{ product.rating.count }})</span></p>
+                                <div class="stars">{{ product.starRating | safe }}</div>
+                            </div>
                             <a href="/product/{{ product._id }}" class="btn btn-primary">View product</a>
                         </div>
                     </div>

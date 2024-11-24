@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ category }}</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
@@ -20,7 +21,10 @@
                         <h5 class="card-title">{{ product.title }}</h5>
                         <p class="card-text">{{ product.category | capitalize }}</p>
                         <h4 class="text-success">${{ product.price }}</h4>
-                        <p>Rating: {{ product.rating.rate }} ({{ product.rating.count }} reviews)</p>
+                        <div class="rating">
+                            <p>Rating: {{ product.rating.rate }} <span>({{ product.rating.count }})</span></p>
+                            <div class="stars">{{ product.starRating | safe }}</div>
+                        </div>
                         <a href="/product/{{ product._id }}" class="btn btn-primary">View product</a>
                     </div>
                 </div>

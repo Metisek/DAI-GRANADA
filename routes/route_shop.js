@@ -3,10 +3,32 @@ import Products from "../model/products.js";
 import Users from "../model/users.js"; // Import Users model
 const ShopRouter = express.Router();
 
+// Helper function to generate star rating HTML
+const generateStarRating = (rating) => {
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 >= 0.5 ? 1 : 0;
+  const emptyStars = 5 - fullStars - halfStar;
+
+  let starsHtml = '';
+  for (let i = 0; i < fullStars; i++) {
+    starsHtml += '<span class="star gold">&#9733;</span>';
+  }
+  if (halfStar) {
+    starsHtml += '<span class="star gold">&#9733;</span>';
+  }
+  for (let i = 0; i < emptyStars; i++) {
+    starsHtml += '<span class="star gray">&#9733;</span>';
+  }
+  return starsHtml;
+};
+
 // Frontpage route for the root URL "/"
 ShopRouter.get('/', async (req, res) => {
   try {
     const products = await Products.find({});   // Retrieve all products
+    products.forEach(product => {
+      product.starRating = generateStarRating(product.rating.rate);
+    });
     res.render('frontpage.html', { products, user: req.user });  // Render the frontpage template with products
   } catch (err) {
     res.status(500).send({ err });
@@ -20,6 +42,7 @@ ShopRouter.get('/product/:id', async (req, res) => {
     if (!product) {
       return res.status(404).send({ message: 'Product not found' });
     }
+    product.starRating = generateStarRating(product.rating.rate);
     res.render('product.html', { product, user: req.user });
   } catch (err) {
     res.status(500).send({ err });

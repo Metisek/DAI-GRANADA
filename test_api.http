@@ -1,18 +1,20 @@
+# Current id is for a backpap (first item in a shop)
+
 ### List all ratings with pagination
 GET http://localhost:8000/api/ratings?desde=0&hasta=4
 
 ###
 
 ### Get rating of a specific product
-GET http://localhost:8000/api/ratings/6719f538fdfbd218f753f044
+GET http://localhost:8000/api/ratings/66f5e3e6958084421dfecd9e
 
 ###
 
 ### Update rating of a specific product
-PUT http://localhost:8000/api/ratings/6719f538fdfbd218f753f044
+PUT http://localhost:8000/api/ratings/66f5e3e6958084421dfecd9e
 Content-Type: application/json
 
 {
-  "rate": 4.5,
-  "count": 150
+  "rate": 4.7,
+  "count": 120
 }

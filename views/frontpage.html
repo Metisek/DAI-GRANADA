@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Store</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
@@ -18,6 +19,11 @@
                     <div class="card-body">
                         <h5 class="card-title">{{ product.title }}</h5>
                         <p class="card-text">{{ product.category | capitalize}}</p>
+                        <h4 class="text-success">${{ product.price }}</h4>
+                        <div class="rating">
+                            <p>Rating: {{ product.rating.rate }} <span>({{ product.rating.count }})</span></p>
+                            <div class="stars">{{ product.starRating | safe }}</div>
+                        </div>
                         <a href="/product/{{ product._id }}" class="btn btn-primary">View product</a>
                     </div>
                 </div>
@@ -31,7 +37,5 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="/js/header.js"></script>
-
-
 </body>
 </html>

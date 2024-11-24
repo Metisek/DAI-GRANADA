@@ -1,7 +1,30 @@
+.star.gold { color: gold; font-size: 1.5em; }
+.star.gray { color: gray; font-size: 1.5em; }
+.rating p { margin-bottom: 0px; } /* Zmniejszony odstęp między napisem Rating a gwiazdkami */
+.rating .stars { margin-bottom: 20px; } /* Zwiększony odstęp między gwiazdkami a przyciskiem */
+
 /* Custom styles for the product cards and navbar */
 .card-img-top {
     height: 200px;
-    object-fit: cover;
+    object-fit: contain;
+    width: 100%; /* Ustaw szerokość na 100% */
+    aspect-ratio: 1 / 1; /* Ustaw proporcje na kwadrat */
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ustaw wysokość na 100% */
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1; /* Pozwól, aby card-body rosło, aby wypełnić przestrzeń */
 }
 
 .product-page {
