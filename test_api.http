@@ -1,4 +1,4 @@
-# Current id is for a backpap (first item in a shop)
+# Current id is for a backpack (first item in a shop)
 
 ### List all ratings with pagination
 GET http://localhost:8000/api/ratings?desde=0&hasta=4
@@ -15,6 +15,24 @@ PUT http://localhost:8000/api/ratings/66f5e3e6958084421dfecd9e
 Content-Type: application/json
 
 {
-  "rate": 4.7,
-  "count": 120
+  "rate": 4.7
 }
+
+###
+
+### Add rating to a specific product
+PUT http://localhost:8000/api/ratings/admin/66f5e3e6958084421dfecd9e
+Content-Type: application/json
+
+{
+  "rate": 5,
+  "userId": "674062f7873942779301a301"
+}
+
+###
+
+### Reset all ratings for all products
+PUT http://localhost:8000/api/ratings/reset
+Content-Type: application/json
+
+{}

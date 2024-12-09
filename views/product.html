@@ -22,8 +22,14 @@
         <p class="text-muted">{{ product.description | capitalize }}</p>
         <h4 class="text-success">${{ product.price }}</h4>
         <div class="rating">
-          <p>Rating: {{ product.rating.rate }} <span>({{ product.rating.count }})</span></p>
-          <div class="stars">{{ product.starRating | safe }}</div>
+          <span class="stars" data-_id="{{ product._id }}">Here the rating of {{ product._id }} will go</span>
+          <div id="userRating" style="display: none;">
+            <span class="user-stars" data-_id="{{ product._id }}">Your rating will go here</span>
+          </div>
+          {% if user %}
+            <button type="button" class="btn btn-primary mt-2" id="rateProductButton" style="display: none;">Rate product</button>
+            <button type="button" class="btn btn-primary mt-2" id="editRatingButton" style="display: none;">Edit your rating</button>
+          {% endif %}
         </div>
         {% if user.admin %}
         <button type="button" class="btn btn-warning mb-2" data-toggle="modal" data-target="#editProductModal">Quick Edit</button>
@@ -34,6 +40,36 @@
           <input type="hidden" name="price" value="{{ product.price }}">
           <button type="submit" class="btn btn-primary">Add to cart</button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rate Product Modal -->
+  <div class="modal fade" id="rateProductModal" tabindex="-1" aria-labelledby="rateProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="rateProductModalLabel">Rate Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="rateProductForm">
+            <input type="hidden" name="product_id" value="{{ product._id }}">
+            <div class="form-group">
+              <label for="rating">Rating:</label>
+              <select id="rating" name="rating" class="form-control">
+                <option value="1">1 Star</option>
+                <option value="2">2 Stars</option>
+                <option value="3">3 Stars</option>
+                <option value="4">4 Stars</option>
+                <option value="5">5 Stars</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -84,5 +120,12 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script src="/js/header.js"></script>
   <script src="/private/js/editProduct.js"></script>
+  <script src="/js/ratings.js"></script>
+  <script>
+    $(document).ready(function () {
+      console.log('jQuery działa poprawnie!');
+    });
+  </script>
+
 </body>
 </html>
