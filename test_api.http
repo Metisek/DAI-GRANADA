@@ -10,16 +10,6 @@ GET http://localhost:8000/api/ratings/66f5e3e6958084421dfecd9e
 
 ###
 
-### Update rating of a specific product
-PUT http://localhost:8000/api/ratings/66f5e3e6958084421dfecd9e
-Content-Type: application/json
-
-{
-  "rate": 4.7
-}
-
-###
-
 ### Add rating to a specific product
 PUT http://localhost:8000/api/ratings/admin/66f5e3e6958084421dfecd9e
 Content-Type: application/json
@@ -33,6 +23,14 @@ Content-Type: application/json
 
 ### Reset all ratings for all products
 PUT http://localhost:8000/api/ratings/reset
+Content-Type: application/json
+
+{}
+
+###
+
+### Delete rating of a specific product
+DELETE http://localhost:8000/api/ratings/66f5e3e6958084421dfecd9e
 Content-Type: application/json
 
 {}

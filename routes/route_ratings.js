@@ -7,32 +7,41 @@ const RatingsRouter = express.Router();
 
 // GET /api/ratings/user/:productId - Get user rating for a specific product
 RatingsRouter.get('/user/:productId', isAuthenticated, async (req, res) => {
-  const userId = req.user._id;
+  const userId = req.user?._id;
+  if (!userId) {
+    return res.status(401).send({ error: 'Unauthorized user.' });
+  }
   try {
-    const product = await Products.findById(req.params.productId).populate('ratings.user', 'username');
+    const product = await Products.findById(req.params.productId);
     if (!product) {
-      return res.status(404).send({ error: 'Product not found' });
+      return res.status(404).json({ error: 'Product not found' });
     }
     const userRating = product.ratings.find(rating => rating.user.equals(userId));
-    res.json({ userRating });
+    res.json({ userRating: userRating || null });
   } catch (err) {
     console.error('Error fetching user rating:', err);
-    res.status(500).send({ error: 'Error fetching user rating' });
+    res.status(500).json({ error: 'Error fetching user rating.' });
   }
 });
 
 // PUT /api/ratings/:id - Update rating of a specific product
 RatingsRouter.put('/:id', isAuthenticated, async (req, res) => {
   const { rate } = req.body;
-  const userId = req.user._id;
+  const userId = req.user?._id;
+
+  if (!rate || typeof rate !== 'number' || rate < 1 || rate > 5) {
+    return res.status(400).json({ error: 'Invalid rating value.' });
+  }
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized user.' });
+  }
 
   try {
     const product = await Products.findById(req.params.id);
     if (!product) {
-      return res.status(404).send({ error: 'Product not found' });
+      return res.status(404).json({ error: 'Product not found.' });
     }
 
-    // Check if the user has already rated this product
     const existingRating = product.ratings.find(rating => rating.user.equals(userId));
     if (existingRating) {
       existingRating.rate = rate;
@@ -41,13 +50,16 @@ RatingsRouter.put('/:id', isAuthenticated, async (req, res) => {
     }
 
     await product.save();
+
+    const updatedRating = product.ratings.reduce((acc, r) => acc + r.rate, 0) / product.ratings.length;
+
     res.json({
-      rate: product.rating.rate,
-      count: product.rating.count
+      rate: updatedRating.toFixed(2),
+      count: product.ratings.length,
     });
   } catch (err) {
     console.error('Error updating rating:', err);
-    res.status(500).send({ error: 'Error updating rating' });
+    res.status(500).json({ error: 'Error updating rating.' });
   }
 });
 
@@ -122,6 +134,36 @@ RatingsRouter.put('/admin/:id', async (req, res) => {
   } catch (err) {
     console.error('Error updating rating:', err);
     res.status(500).send({ error: 'Error updating rating' });
+  }
+});
+
+// Po
+RatingsRouter.delete('/:id', isAuthenticated, async (req, res) => {
+  const userId = req.user?._id;
+
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized user.' });
+  }
+
+  try {
+    const product = await Products.findById(req.params.id);
+    if (!product) {
+      return res.status(404).json({ error: 'Product not found.' });
+    }
+
+    const initialCount = product.ratings.length;
+
+    product.ratings = product.ratings.filter(rating => !rating.user.equals(userId));
+
+    if (product.ratings.length === initialCount) {
+      return res.status(404).json({ error: 'Rating not found for this user.' });
+    }
+
+    await product.save();
+    res.json({ success: true, message: 'Rating deleted.' });
+  } catch (err) {
+    console.error('Error deleting rating:', err);
+    res.status(500).json({ error: 'Error deleting rating.' });
   }
 });
 

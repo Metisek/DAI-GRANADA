@@ -1,132 +1,175 @@
-//ratings.js
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM załadowany, inicjalizuję modale.');
-
-    // Pobranie referencji do przycisków i modali
     const rateProductModal = document.getElementById('rateProductModal');
     const rateProductButton = document.getElementById('rateProductButton');
     const editRatingButton = document.getElementById('editRatingButton');
+    const deleteRatingButton = document.getElementById('deleteRatingButton');
+    const ratingSuccessMessage = document.getElementById('ratingSuccessMessage');
+    let selectedRating = 0;
 
+    // Obsługa modal
     if (rateProductModal) {
-        // Inicjalizacja modala Bootstrap bez jQuery
         const modalInstance = new bootstrap.Modal(rateProductModal);
 
         if (rateProductButton) {
             rateProductButton.addEventListener('click', () => {
-                try {
-                    modalInstance.show(); // Pokazuje modal
-                } catch (error) {
-                    console.error('Błąd przy wyświetlaniu modala #rateProductModal:', error);
-                    alert('Nie udało się wyświetlić modala.');
-                }
+                modalInstance.show();
             });
         }
 
         if (editRatingButton) {
             editRatingButton.addEventListener('click', () => {
-                try {
-                    modalInstance.show(); // Pokazuje modal
-                } catch (error) {
-                    console.error('Błąd przy wyświetlaniu modala #rateProductModal:', error);
-                    alert('Nie udało się wyświetlić modala.');
-                }
+                modalInstance.show();
             });
         }
-    } else {
-        console.error('Nie znaleziono modala #rateProductModal.');
-    }
 
-    // Funkcja do aktualizacji gwiazdek po ocenie
-    function updateStars(ele, rating) {
-        let new_html_with_stars = '';
-        for (let i = 1; i <= 5; i++) {
-            new_html_with_stars += `<span class="star ${i <= rating ? 'gold' : 'gray'}" data-_id="${ele.dataset._id}" data-star="${i}">&#9733;</span>`;
+        if (deleteRatingButton) {
+            deleteRatingButton.addEventListener('click', () => {
+                const productId = rateProductForm.product_id.value;
+                fetch(`/api/ratings/${productId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                        } else {
+                            alert('Failed to delete rating.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting rating:', error);
+                    });
+            });
         }
-        ele.innerHTML = new_html_with_stars;
     }
 
-    // Pobieranie ocen z API
-    const ele_stars = document.getElementsByClassName('stars');
-    for (const ele of ele_stars) {
-        const ide = ele.dataset._id;
+    // Funkcja do aktualizacji gwiazdek
+    function updateStars(element, rating, count) {
+        let starsHTML = '';
+        for (let i = 1; i <= 5; i++) {
+            starsHTML += `<span class="star ${i <= rating ? 'gold' : 'gray'}">&#9733;</span>`;
+        }
+        starsHTML += ` <span>${rating.toFixed(1)} (${count})</span>`;
+        element.innerHTML = starsHTML;
+    }
 
-        // Pobieranie ogólnej oceny produktu
-        fetch(`/api/ratings/${ide}`)
+    // Pobieranie ocen dla produktu
+    const starElements = document.getElementsByClassName('stars');
+    Array.from(starElements).forEach(element => {
+        const productId = element.dataset._id;
+
+        // Pobierz średnią ocenę
+        fetch(`/api/ratings/${productId}`)
             .then(response => response.json())
             .then(data => {
-                const rating = data.rate;
-                const count = data.count;
-                let new_html_with_stars = '';
-                for (let i = 1; i <= 5; i++) {
-                    new_html_with_stars += `<span class="star ${i <= rating ? 'gold' : 'gray'}" data-_id="${ide}" data-star="${i}">&#9733;</span>`;
+                if (data.rate !== undefined) {
+                    updateStars(element, data.rate, data.count);
                 }
-                new_html_with_stars += ` <span>${rating.toFixed(1)} (${count})</span>`;
-                ele.innerHTML = new_html_with_stars;
             })
             .catch(error => {
-                console.error('Błąd pobierania oceny produktu:', error);
-                alert('Błąd pobierania oceny. Sprawdź konsolę.');
+                console.error('Error fetching product rating:', error);
             });
 
-        // Pobieranie oceny użytkownika
-        fetch(`/api/ratings/user/${ide}`)
+        // Pobierz ocenę użytkownika
+        fetch(`/api/ratings/user/${productId}`)
             .then(response => response.json())
             .then(data => {
-                const userStars = document.querySelector(`.user-stars[data-_id="${ide}"]`);
-                if (data.userRating) {
-                    let user_html_with_stars = 'Twoja ocena: ';
-                    for (let i = 1; i <= 5; i++) {
-                        user_html_with_stars += `<span class="star ${i <= data.userRating.rate ? 'gold' : 'gray'}" data-_id="${ide}" data-star="${i}">&#9733;</span>`;
-                    }
-                    user_html_with_stars += ` ${data.userRating.rate}`;
-                    if (userStars) userStars.innerHTML = user_html_with_stars;
+                console.log('User rating data:', data); // Dodaj logi, aby sprawdzić dane
+                const userStars = document.querySelector(`.user-stars[data-_id="${productId}"]`);
+                const userRatingDiv = document.getElementById('userRating');
 
+                if (data.userRating !== null && data.userRating !== undefined) {
+                    let userStarsHTML = 'Your rating: ';
+                    for (let i = 1; i <= 5; i++) {
+                        userStarsHTML += `<span class="star ${i <= data.userRating ? 'gold' : 'gray'}">&#9733;</span>`;
+                    }
+                    userStarsHTML += ` ${data.userRating}`;
+
+                    // Aktualizuj wyświetlanie gwiazdek użytkownika
+                    if (userStars) {
+                        userStars.innerHTML = userStarsHTML;
+                        userStars.style.display = 'block';
+                        if (userRatingDiv) {
+                            userRatingDiv.style.display = 'block';
+                        }
+                    } else {
+                        console.warn(`Element .user-stars dla produktu ${productId} nie został znaleziony.`);
+                    }
+
+                    // Ukryj przycisk dodania oceny, pokaż edycję/usuwanie
                     if (rateProductButton) rateProductButton.style.display = 'none';
                     if (editRatingButton) editRatingButton.style.display = 'block';
+                    if (deleteRatingButton) deleteRatingButton.style.display = 'block';
                 } else {
+                    // Jeśli brak oceny użytkownika, pokaż przycisk dodania
+                    if (userStars) {
+                        userStars.style.display = 'none';
+                    }
+                    if (userRatingDiv) {
+                        userRatingDiv.style.display = 'none';
+                    }
                     if (rateProductButton) rateProductButton.style.display = 'block';
                     if (editRatingButton) editRatingButton.style.display = 'none';
+                    if (deleteRatingButton) deleteRatingButton.style.display = 'none';
                 }
             })
             .catch(error => {
-                console.error('Błąd pobierania oceny użytkownika:', error);
-                alert('Błąd pobierania oceny użytkownika. Sprawdź konsolę.');
+                console.error('Error fetching user rating:', error);
             });
-    }
+    });
 
-    // Obsługa formularza oceniania produktu
+    // Obsługa formularza oceny
     const rateProductForm = document.getElementById('rateProductForm');
     if (rateProductForm) {
         rateProductForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const productId = rateProductForm.product_id.value;
-            const rating = rateProductForm.rating.value;
 
             fetch(`/api/ratings/${productId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ rate: rating }),
+                body: JSON.stringify({ rate: selectedRating }),
             })
-                .then(response => {
-                    if (response.status === 401) {
-                        alert('Musisz być zalogowany, aby ocenić ten produkt.');
-                        return;
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data) {
-                        updateStars(document.querySelector(`.stars[data-_id="${productId}"]`), data.rate);
-                        new bootstrap.Modal(rateProductModal).hide();
-                        location.reload(); // Odśwież stronę
+                        const starsElement = document.querySelector(`.stars[data-_id="${productId}"]`);
+                        updateStars(starsElement, data.rate, data.count);
+
+                        const userStars = document.querySelector(`.user-stars[data-_id="${productId}"]`);
+                        let userStarsHTML = 'Your rating: ';
+                        for (let i = 1; i <= 5; i++) {
+                            userStarsHTML += `<span class="star ${i <= selectedRating ? 'gold' : 'gray'}">&#9733;</span>`;
+                        }
+                        userStarsHTML += ` ${selectedRating}`;
+                        if (userStars) {
+                            userStars.innerHTML = userStarsHTML;
+                            userStars.style.display = 'block';
+                        }
+
+                        ratingSuccessMessage.style.display = 'block';
+                        setTimeout(() => {
+                            location.reload();
+                        }, 1000);
                     }
                 })
                 .catch(error => {
-                    console.error('Błąd wysyłania oceny:', error);
-                    alert('Błąd wysyłania oceny. Sprawdź konsolę.');
+                    console.error('Error submitting rating:', error);
                 });
         });
     }
+
+    // Obsługa kliknięcia gwiazdek w modal
+    document.querySelectorAll('.rating-modal .star').forEach(star => {
+        star.addEventListener('click', () => {
+            selectedRating = parseInt(star.dataset.star, 10);
+            const stars = star.parentElement.children;
+            Array.from(stars).forEach((s, index) => {
+                s.classList.remove('gold', 'gray');
+                s.classList.add(index < selectedRating ? 'gold' : 'gray');
+            });
+        });
+    });
 });

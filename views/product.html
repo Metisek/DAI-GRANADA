@@ -5,11 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <title>{{ product.title }}</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="/css/style.css"> <!-- Ścieżka do pliku CSS -->
-  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  <div id="header"></div> <!-- Miejsce, w którym wstawimy nagłówek -->
+  <div id="header"></div>
 
   <div class="container mt-4">
     <div class="row">
@@ -27,8 +26,10 @@
             <span class="user-stars" data-_id="{{ product._id }}">Your rating will go here</span>
           </div>
           {% if user %}
-            <button type="button" class="btn btn-primary mt-2" id="rateProductButton" style="display: none;">Rate product</button>
-            <button type="button" class="btn btn-primary mt-2" id="editRatingButton" style="display: none;">Edit your rating</button>
+            <div class="rating-buttons">
+              <button type="button" class="btn btn-primary mt-2" style="margin-top: 10px;" id="rateProductButton" style="display: none;">Rate product</button>
+              <button type="button" class="btn btn-primary mt-2" style="margin-top: 10px;" id="editRatingButton" style="display: none;">Edit your rating</button>
+            </div>
           {% endif %}
         </div>
         {% if user.admin %}
@@ -38,7 +39,7 @@
           <input type="hidden" name="productId" value="{{ product.id }}">
           <input type="hidden" name="title" value="{{ product.title }}">
           <input type="hidden" name="price" value="{{ product.price }}">
-          <button type="submit" class="btn btn-primary">Add to cart</button>
+          <button type="submit" style="margin-top: 10px;" class="btn btn-primary">Add to cart</button>
         </form>
       </div>
     </div>
@@ -59,16 +60,18 @@
             <input type="hidden" name="product_id" value="{{ product._id }}">
             <div class="form-group">
               <label for="rating">Rating:</label>
-              <select id="rating" name="rating" class="form-control">
-                <option value="1">1 Star</option>
-                <option value="2">2 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="5">5 Stars</option>
-              </select>
+              <div id="rating" class="d-flex justify-content-center rating-modal">
+                <span class="star" data-star="1">&#9733;</span>
+                <span class="star" data-star="2">&#9733;</span>
+                <span class="star" data-star="3">&#9733;</span>
+                <span class="star" data-star="4">&#9733;</span>
+                <span class="star" data-star="5">&#9733;</span>
+              </div>
             </div>
             <button type="submit" class="btn btn-primary">Send</button>
           </form>
+          <button type="button" class="btn btn-danger mt-2" id="deleteRatingButton" style="display: none;">Delete your rating</button>
+          <div id="ratingSuccessMessage" class="alert alert-success mt-2" style="display: none;">Rating submitted successfully!</div>
         </div>
       </div>
     </div>
@@ -76,7 +79,7 @@
 
   <!-- Edit Product Modal -->
   <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg"> <!-- Added modal-lg class for larger modal -->
+    <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
@@ -121,11 +124,5 @@
   <script src="/js/header.js"></script>
   <script src="/private/js/editProduct.js"></script>
   <script src="/js/ratings.js"></script>
-  <script>
-    $(document).ready(function () {
-      console.log('jQuery działa poprawnie!');
-    });
-  </script>
-
 </body>
 </html>
